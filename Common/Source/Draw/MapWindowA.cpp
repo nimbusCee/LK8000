@@ -213,15 +213,19 @@ void MapWindow::DrawTptAirSpace(LKSurface& Surface, const RECT& rc) {
 
     for (auto it=airspaces_to_draw.begin(); it != airspaces_to_draw.end(); ++it) {
 
+	const int airspace_type = (*it)->Type();
+
+	if ( ((*it)->DrawStyle() != adsHidden) && ((airspace_type == 17) || (airspace_type == 7)) ) { 
+		// (*it)->DrawStyle() = adsFilled; // not enough skills to manage it :-|
+	}
+
         if (((*it)->DrawStyle() == adsHidden) ||
           ((  (*it)->Top()->Base == abMSL) && ((*it)->Top()->Altitude <= 0))){
           continue;  // don't draw on map if hidden or upper limit is on sea level or below
         }
 
-        const int airspace_type = (*it)->Type();
-
-        std::unique_ptr<const GLEnable<GL_STENCIL_TEST>> stencil;
-        if(borders_only) {
+	std::unique_ptr<const GLEnable<GL_STENCIL_TEST>> stencil;
+        if(borders_only && (airspace_type != 17) && (airspace_type != 7)) {
             stencil = std::make_unique<const GLEnable<GL_STENCIL_TEST>>();
 
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -241,11 +245,12 @@ void MapWindow::DrawTptAirSpace(LKSurface& Surface, const RECT& rc) {
             glStencilMask(0x00);
             // draw where stencil's value is not 0
             glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-        }
+        } 
 
         // Draw Airspaces
 
-        if ( (((*it)->DrawStyle()==adsFilled)&&!borders_only) ^ (asp_selected_flash && (*it)->Selected()) ) {
+        if (	((((*it)->DrawStyle()==adsFilled)&&!borders_only) ^ (asp_selected_flash && (*it)->Selected()))
+		|| ((airspace_type == 17) || (airspace_type == 7)) ) {
             Surface.SelectObject(LK_BLACK_PEN);
         } else if(  (*it)->DrawStyle()==adsDisabled)   {
             Surface.SelectObject(LKPen_Grey_N2);
@@ -253,8 +258,8 @@ void MapWindow::DrawTptAirSpace(LKSurface& Surface, const RECT& rc) {
             Surface.SelectObject(hAirspacePens[airspace_type]);
         }
 
-
-        if ((*it)->DrawStyle() == adsFilled) {
+        if (	((*it)->DrawStyle() == adsFilled) 
+		|| ((airspace_type == 17) || (airspace_type == 7))) {
             Surface.SelectObject(GetAirSpaceSldBrushByClass(airspace_type));
         } else {
             Surface.SelectObject(LKBrush_Hollow);
