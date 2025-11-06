@@ -1392,6 +1392,7 @@ void MapWindow::_OnKeyDown(unsigned KeyCode) {
                 //
                 // THE LEFT SCREEN
                 //
+            case KEY_LEFT: // cee - to enable LR knob turn left
             case KEY_3:
             case KEY_4:
             case KEY_5:
@@ -1404,6 +1405,7 @@ void MapWindow::_OnKeyDown(unsigned KeyCode) {
                 //
                 // THE RIGHT SCREEN
                 //
+            case KEY_RIGHT: // cee - to enable LR knob turn right
             case KEY_SPACE: // space
                 key_next_page();
                 return;
@@ -1412,6 +1414,7 @@ void MapWindow::_OnKeyDown(unsigned KeyCode) {
                 //
                 // THE CENTER-UP
                 //
+            case KEY_UP: // cee - to enable UD knob turn right
             case KEY_I:
             case KEY_K:
             case 188: // VK_OEM_COMMA
@@ -1428,6 +1431,7 @@ void MapWindow::_OnKeyDown(unsigned KeyCode) {
                 //
                 // THE CENTER-DOWN
                 //
+            case KEY_DOWN: // cee - to enable UD knob turn left
             case KEY_T:
             case KEY_G:
             case KEY_B:
