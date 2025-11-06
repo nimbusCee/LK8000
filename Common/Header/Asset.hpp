@@ -133,7 +133,8 @@ IsEmbedded()
 #ifdef ANDROID
 static inline bool
 HasKeyboard() {
-  return has_keyboard;
+  // return has_keyboard; // (CEE)
+  return true; // (CEE) enable keyboard for android devices
 }
 #else
 constexpr
