@@ -240,20 +240,20 @@ void bottom_bar::draw_alt_data(LKSurface& Surface) const {
     draw_lkvalues_data(Surface, 7, LK_HOMERADIAL);
     draw_lkvalues_data(Surface, 8, LK_IAS);
     draw_lkvalues_data(Surface, 9, LK_SPEED_MC);
-  } else {
-    draw_lkvalues_data(Surface, 0, LK_BESTALTERN_GR);
+  } else { // cee: portrait mode
+	draw_lkvalues_data(Surface, 0, LK_BESTALTERN_DIST); // cee: changed LK_BESTALTERN_GR to LK_BESTALTERN_DIST 
     draw_lkvalues_data(Surface, _col_count, LK_BESTALTERN_ARRIV, _T(""));
     if (_col_count > 1) {
-      draw_lkvalues_data(Surface, 1, LK_ALTERN1_GR);
+      draw_lkvalues_data(Surface, 1, LK_ALTERN1_DIST); // cee: changed LK_ALTERN1_GR to LK_ALTERN1_DIST
       draw_lkvalues_data(Surface, _col_count + 1, LK_ALTERN1_ARRIV, _T(""));
     }
     if (_col_count > 2) {
-      draw_lkvalues_data(Surface, 2, LK_ALTERN2_GR);
+      draw_lkvalues_data(Surface, 2, LK_ALTERN2_DIST); // cee: changed LK_ALTERN2_GR to LK_ALTERN2_DIST
       draw_lkvalues_data(Surface, _col_count + 2, LK_ALTERN2_ARRIV, _T(""));
     }
     if (_col_count > 3) {
-      draw_lkvalues_data(Surface, 3, LK_HOME_ARRIVAL);
-      draw_lkvalues_data(Surface, _col_count + 3, LK_HOMERADIAL);
+      draw_lkvalues_data(Surface, 3, LK_HOME_DIST, _T("Home"));
+	  draw_lkvalues_data(Surface, _col_count + 3, LK_HOME_ARRIVAL, _T(""));
     }
     if (_col_count > 4) {
       draw_lkvalues_data(Surface, 4, LK_IAS);
