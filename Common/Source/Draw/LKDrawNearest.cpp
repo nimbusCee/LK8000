@@ -235,8 +235,8 @@ void MapWindow::DrawNearest(LKSurface& Surface, const RECT& rc) {
         Column5[MSM_TRAFFIC] = Column5[MSM_LANDABLE];
         //
 
-        max_name[MSM_LANDABLE] = MAXNLNAME;
-        max_name[MSM_AIRPORTS] = MAXNLNAME;
+        max_name[MSM_LANDABLE] = 20; // = MAXNLNAME; // cee
+        max_name[MSM_AIRPORTS] = 20; // = MAXNLNAME; // cee
         max_name[MSM_NEARTPS] = MAXNLNAME;
         max_name[MSM_COMMON] = MAXNLNAME;
         max_name[MSM_RECENT] = MAXNLNAME;
