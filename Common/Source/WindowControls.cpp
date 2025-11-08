@@ -1616,12 +1616,15 @@ void WindowControl::Paint(LKSurface& Surface) {
     rc.bottom += 2;
 
     Surface.FillRect(&rc, GetBackBrush());
+	Surface.SetTextColor(RGB_WHITE); // (CEE) added to visualise controls (due to hidden button) on dark backgrounds
+  
 
     // JMW added highlighting, useful for lists
     if (!mDontPaintSelector && mCanFocus && HasFocus()) {
         rc.right -= 2;
         rc.bottom -= 2;
         Surface.FillRect(&rc, LKBrush_Higlighted);
+		Surface.SetTextColor(RGB_BLACK); // (CEE) results in black on yellow in case the button is hidden
     }
     PaintBorder(Surface);
     #ifdef USE_OLD_SELECTOR
@@ -2087,12 +2090,12 @@ void WndButton::Paint(LKSurface& Surface){
 
   if (!IsVisible()) return;
 
-  WindowControl::Paint(Surface);
+  // WindowControl::Paint(Surface); // moved down in order to get the changes not overwritten
 
   const PixelRect rcClient(GetClientRect());
 
-  DrawPushButton(Surface);
-
+  // DrawPushButton(Surface);
+  // Surface.DrawPushButton(rc, mDown); // (CEE) commented to make the button invisible as I can't get the button itself yellow
 
   if (mLedMode) {
     PixelRect rc = rcClient;
@@ -2149,6 +2152,8 @@ void WndButton::Paint(LKSurface& Surface){
     const auto oldFont = Surface.SelectObject(GetFont());
     PixelRect rc = rcClient;
     InflateRect(&rc, -2, -2); // todo border width
+	
+	WindowControl::Paint(Surface); // (CEE) moved it here from top
 
     if (mDown)
       OffsetRect(&rc, 2, 2);
@@ -2490,18 +2495,21 @@ void WndProperty::Paint(LKSurface& Surface){
   rc.bottom += 2;
 
   Surface.FillRect(&rc, GetBackBrush());
+  Surface.SetTextColor(GetForeColor()); // (CEE) moved statement here BEFORE HasFocus for all Property fields NOT having the focus
   
 
 
   if(HasFocus() && mCanFocus) {
     auto oldBrush = Surface.SelectObject(LK_HOLLOW_BRUSH);
     auto oldPen = Surface.SelectObject(LKPen_Higlighted);
+	Surface.FillRect(&rc, LKBrush_Yellow); // (CEE) highlight the background of active property
+    Surface.SetTextColor(RGB_BLACK);// (CEE) ... and set text color accordingly
     Surface.Rectangle(rc.left, rc.top, rc.right-3, rc.bottom-3);
     Surface.SelectObject(oldPen);
     Surface.SelectObject(oldBrush);
   }
 
-  Surface.SetTextColor(GetForeColor());
+  // Surface.SetTextColor(GetForeColor()); // (CEE) moved to top in order to prevent overwriting of values set in HasFocus()
   Surface.SetBkColor(GetBackColor());
   Surface.SetBackgroundTransparent();
   const auto oldFont = Surface.SelectObject(GetFont());
