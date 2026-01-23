@@ -364,12 +364,11 @@ void RestartCommPorts() {
     TestLog(_T(". RestartCommPorts end @%s"), WhatTimeIsIt());
 }
 
-// Only called from devInit() above which
-// is in turn called with LockComm
+// Only called from RxThread()
 BOOL devOpen(DeviceDescriptor_t* d) {
-
-  StartupStore(_T(". Device %c ready @%s"), devLetter(d->PortNumber), WhatTimeIsIt());
-
+  StartupStore(_T(". Device %c Open @%s"), devLetter(d->PortNumber), WhatTimeIsIt());
+  
+  ScopeLock lock(CritSec_Comm);
   if (d && d->Open) {
     return d->Open(d);
   }
@@ -517,12 +516,12 @@ BOOL devInit() {
       GPS_INFO.reset_availability();
     });
 
-    ScopeLock Lock(CritSec_Comm);
 
     for (unsigned i = 0; i < NUMDEV; i++) {
         const auto& Config = PortConfig[i];
         auto& dev = DeviceList[i];
         
+        ScopeLock Lock(CritSec_Comm);
         dev.Reset();
 
         if (SIMMODE){
@@ -574,12 +573,9 @@ BOOL devInit() {
         if (Com && Com->Initialize()) {
             pDev->Install(&dev);
             /*
-             * Need to be done before anny #DeviceDescriptor_t::Callback call.
+             * Need to be done before any #DeviceDescriptor_t::Callback call.
              */
             dev.Com = Com;
-            if (Com->IsReady()) {
-                devOpen(&dev);
-            }
 
             Com->StartRxThread();
         } else {
@@ -601,8 +597,7 @@ BOOL devInit() {
 }
 
 // Tear down methods should always succeed.
-// Called from devInit() above under LockComm
-// Also called when shutting down via devCloseAll()
+// Called on RestartCommPorts() and shutting down via devCloseAll()
 static void devClose(DeviceDescriptor_t& d) {
 
   ComPort* port = WithLock(CritSec_Comm, [&]() {
@@ -1053,12 +1048,12 @@ BOOL FlarmDeclare(DeviceDescriptor_t* d, const Declaration_t* decl) {
     char NoS = (point.Latitude > 0) ? 'N' : 'S';
     double latitude = std::abs(point.Latitude);
     int DegLat = latitude;
-    int MinLat = (latitude - DegLat) * 60. * 10000.;
+    int MinLat = (latitude - DegLat) * 60. * 1000.;
 
     char EoW = (point.Longitude > 0) ? 'E' : 'W';
     double longitude = std::abs(point.Longitude);
     int DegLon = longitude;
-    int MinLon = (longitude - DegLon) * 60. * 10000.;
+    int MinLon = (longitude - DegLon) * 60. * 1000.;
 
     TCHAR value[32];
     lk::snprintf(value, _T("%02d%05d%c,%03d%05d%c,P%02d"), DegLat, MinLat, NoS, DegLon, MinLon, EoW, j);

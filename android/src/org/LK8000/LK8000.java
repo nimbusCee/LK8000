@@ -89,7 +89,7 @@ public class LK8000 extends Activity {
               });
     }
 
-    Log.d(TAG, "ABI=" + Build.CPU_ABI);
+    Log.d(TAG, "ABI=" + Build.SUPPORTED_ABIS);
     Log.d(TAG, "PRODUCT=" + Build.PRODUCT);
     Log.d(TAG, "MANUFACTURER=" + Build.MANUFACTURER);
     Log.d(TAG, "MODEL=" + Build.MODEL);
@@ -100,7 +100,7 @@ public class LK8000 extends Activity {
     if (!Loader.loaded) {
       TextView tv = new TextView(this);
       tv.setText(getString(R.string.error_native_library) + "\n" +
-                 "ABI=" + Build.CPU_ABI + "\n" +
+                 "ABI=" + Build.SUPPORTED_ABIS + "\n" +
                  "PRODUCT=" + Build.PRODUCT + "\n" +
                  "FINGERPRINT=" + Build.FINGERPRINT + "\n" +
                  "error=" + Loader.error);
@@ -110,9 +110,9 @@ public class LK8000 extends Activity {
 
     AudioManager myAudioMgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
     final String sampleRateStr = myAudioMgr.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
-    final int sampleRate = Integer.parseInt(sampleRateStr);
+    final int sampleRate = (sampleRateStr == null) ? 44100 : Integer.parseInt(sampleRateStr);
     final String framesPerBurstStr = myAudioMgr.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
-    final int framesPerBurst = Integer.parseInt(framesPerBurstStr);
+    final int framesPerBurst = (framesPerBurstStr == null) ? 256 : Integer.parseInt(framesPerBurstStr);
     setDefaultStreamValues(sampleRate, framesPerBurst);
 
     initialiseNative();

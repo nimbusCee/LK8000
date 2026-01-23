@@ -36,7 +36,7 @@
 #include "utils/lookup_table.h"
 #include "LocalPath.h"
 #include "InputEvents.h"
-#include "utils/charset_helper.h"
+#include "utils/stream_helper.h"
 #include <string_view>
 
 using namespace std::string_view_literals;
@@ -79,7 +79,10 @@ auto type_table = lookup_table<tstring_view, int, start_with_predicate>({
     { _T("TMZ"), CLASSTMZ },
     { _T("RMZ"), CLASSRMZ },
     { _T("NOTAM"), CLASSNOTAM },
-    { _T("GSEC"), GLIDERSECT }
+    { _T("GSEC"), GLIDERSECT },
+    { _T("TRA"), RESTRICT },
+    { _T("TSA"), RESTRICT },
+    { _T("ASRA"), GLIDERSECT },
 });
 
 /**
@@ -1482,12 +1485,11 @@ bool CAirspaceManager::FillAirspacesFromOpenAir(const TCHAR* szFile) {
     StartupStore(TEXT(". Reading OpenAir airspace file%s"), NEWLINE);
 
     std::istream istream(&stream);
-    std::string src_line;
-
-    while (std::getline(istream, src_line)) {
+    tstring src_line;
+ 
+    while (lk::getline_unknown_charset(istream, src_line)) {
         ++linecount;
-        tstring Text = from_unknown_charset(src_line.c_str());
-        TCHAR* p = Text.data();
+        TCHAR* p = src_line.data();
         while (*p != 0 && isspace(*p)) {
             p++; // Skip whitespaces
         }

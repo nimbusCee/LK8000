@@ -30,10 +30,7 @@ using namespace std::placeholders;
 TTYPort::TTYPort(unsigned idx, const tstring& sName, unsigned dwSpeed, BitIndex_t BitSize, bool polling) :
         ComPort(idx, sName),
         _dwPortSpeed(dwSpeed),
-        _dwPortBit(BitSize),
-        _tty(-1),
-        _oldtio(),
-        _Timeout()
+        _dwPortBit(BitSize)
 {
 }
 
@@ -281,7 +278,13 @@ unsigned TTYPort::RxThread() {
     char szString[1024];
     Purge();
 
+    bool opened = false;  // Call devOpen() once at startup
     while ((_tty != -1) && !StopEvt.tryWait(5)) {
+        if (!opened) {
+            opened = true;
+            devOpen(devGetDeviceOnPort(GetPortIndex()));
+        }
+
         ScopeLock Lock(CritSec_Comm);
         UpdateStatus();
         int nRecv = ComPort::Read(szString);

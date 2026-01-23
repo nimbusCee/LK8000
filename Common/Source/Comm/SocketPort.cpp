@@ -13,7 +13,7 @@
 #include <functional>
 using namespace std::placeholders;
 
-SocketPort::SocketPort(unsigned idx, const tstring& sName) : ComPort(idx, sName), mSocket(INVALID_SOCKET), mTimeout(40) {
+SocketPort::SocketPort(unsigned idx, const tstring& sName) : ComPort(idx, sName) {
 #ifdef WIN32
     WSADATA wsd;
     WSAStartup(MAKEWORD(1, 1), &wsd);
@@ -183,7 +183,12 @@ unsigned SocketPort::RxThread() {
         // if failed, socket still in blocking mode, it's big problem
     }
 
+    bool opened = false;  // Call devOpen() once at startup
     while (mSocket != INVALID_SOCKET && !StopEvt.tryWait(5)) {
+        if (!opened) {
+            opened = true;
+            devOpen(devGetDeviceOnPort(GetPortIndex()));
+        }
 
         ScopeLock Lock(CritSec_Comm);
         UpdateStatus();
