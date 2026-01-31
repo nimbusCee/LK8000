@@ -238,7 +238,8 @@ void MapWindow::DrawTptAirSpace(LKSurface& Surface, const RECT& rc) {
 
     const int airspace_type = pAsp->Type();
 
-    if (pAsp->DrawStyle() == adsFilled) {
+    // cee if (pAsp->DrawStyle() == adsFilled) {
+    if ((pAsp->DrawStyle() == adsFilled) || (airspace_type == 17) || (airspace_type == 7)) {
       std::unique_ptr<const GLEnable<GL_STENCIL_TEST>> stencil;
       if (borders_only) {
         stencil = std::make_unique<const GLEnable<GL_STENCIL_TEST>>();
