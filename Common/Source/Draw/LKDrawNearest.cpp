@@ -247,7 +247,8 @@ void MapWindow::DrawNearest(LKSurface& Surface, const RECT& rc) {
         // So, how long we want the name, minimally? The remaining space will be
         // equally divided for spacing the other items on the row, and increasing
         // as well the name size at the same time.
-#define MINNAME_COMMON_CONDITION (ScreenLandscape?8:4)
+        // #define MINNAME_COMMON_CONDITION (ScreenLandscape?8:4) // cee
+        #define MINNAME_COMMON_CONDITION (ScreenLandscape?8:18) // cee
         min_name[MSM_LANDABLE] = MINNAME_COMMON_CONDITION;
         min_name[MSM_AIRPORTS] = MINNAME_COMMON_CONDITION;
         min_name[MSM_NEARTPS] = MINNAME_COMMON_CONDITION;
