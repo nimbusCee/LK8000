@@ -9,4 +9,3 @@
 [submodule "lib/json"]
 	path = lib/json
 	url = https://github.com/nlohmann/json.git
-	tags = v3.11.2
